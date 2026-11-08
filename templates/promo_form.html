@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if is_new %}Додати промокод{% else %}Редагувати промокод{% endif %} | AVANGARD SHOP
+{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">АДМІН-ПАНЕЛЬ · ПРОМОКОДИ</p>
+    <h1>{% if is_new %}Додати промокод{% else %}Редагувати промокод{% endif %}</h1>
+    <p>Вкажіть код і розмір знижки у відсотках.</p>
+</section>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <p
+        class="mb-4 rounded-md border px-4 py-3
+        {% if category == 'error' %}
+            border-red-300 bg-red-50 text-red-800
+        {% else %}
+            border-green-300 bg-green-50 text-green-800
+        {% endif %}"
+        role="alert"
+    >
+        {{ message }}
+    </p>
+    {% endfor %}
+{% endwith %}
+
+<form method="post" class="contact-card mt-6 max-w-2xl">
+    <div class="mb-4">
+        <label for="code" class="mb-1 block font-semibold">Код промокоду</label>
+        <input
+            id="code"
+            name="code"
+            type="text"
+            value="{{ promo['code']|default('') }}"
+            placeholder="Наприклад, AVANGARD10"
+            maxlength="40"
+            required
+            class="w-full rounded-md border border-gray-300 px-3 py-2"
+        >
+    </div>
+
+    <div class="mb-4">
+        <label for="discount_percent" class="mb-1 block font-semibold">
+            Розмір знижки, %
+        </label>
+        <input
+            id="discount_percent"
+            name="discount_percent"
+            type="number"
+            min="0.01"
+            max="100"
+            step="0.01"
+            value="{{ promo['discount_percent']|default('') }}"
+            required
+            class="w-full rounded-md border border-gray-300 px-3 py-2"
+        >
+    </div>
+
+    <label class="mb-6 flex items-center gap-2">
+        <input
+            name="is_active"
+            type="checkbox"
+            value="on"
+            {% if promo['is_active']|default(0) %}checked{% endif %}
+        >
+        <span>Промокод активний</span>
+    </label>
+
+    <div class="flex flex-wrap gap-3">
+        <button type="submit" class="button" style="border: 0; cursor: pointer;">
+            {% if is_new %}Створити промокод{% else %}Зберегти зміни{% endif %}
+        </button>
+        <a href="{{ url_for('admin.promos') }}" class="button">Скасувати</a>
+    </div>
+</form>
+{% endblock %}
