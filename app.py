@@ -1,32 +1,59 @@
-from flask import Flask, render_template
+import os
+from datetime import datetime
+
+from flask import Flask, render_template, session
+
+import models
+from routes.admin import admin_bp
+from routes.feedback import feedback_bp
+from routes.shop import shop_bp
+
 
 app = Flask(__name__)
 
+app.config['DATABASE'] = os.environ.get(
+    'DATABASE',
+    os.path.join(app.root_path, 'db.sqlite')
+)
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-only-change-me')
 
-@app.route("/")
+app.teardown_appcontext(models.close_db)
+
+with app.app_context():
+    models.init_db()
+
+app.register_blueprint(feedback_bp)
+app.register_blueprint(admin_bp)
+app.register_blueprint(shop_bp)
+
+
+@app.template_filter('money')
+def money(value):
+    return f'{value:.2f} грн'
+
+
+@app.context_processor
+def inject_globals():
+    return {
+        'current_year': datetime.now().year,
+        'cart_count': sum(session.get('cart', {}).values()),
+    }
+
+
+@app.route('/')
 def home():
-    return render_template("index.html")
+    return render_template('index.html')
 
 
-@app.route("/catalog")
-def catalog():
-    return render_template("catalog.html")
-
-
-@app.route("/categories")
+@app.route('/categories')
 def categories():
-    return render_template("categories.html")
+    return render_template('categories.html')
 
 
-@app.route("/about")
+@app.route('/about')
 def about():
-    return render_template("about.html")
+    return render_template('about.html')
 
 
-@app.route("/contacts")
-def contacts():
-    return render_template("contacts.html")
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)

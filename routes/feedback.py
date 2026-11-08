@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, render_template, request
 import models
 
 
-feedback_bp = Blueprint('feedback', name)
+feedback_bp = Blueprint('feedback', __name__)
 
 
 @feedback_bp.route('/contacts', methods=['GET', 'POST'])
