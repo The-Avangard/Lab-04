@@ -13,13 +13,13 @@
     <article class="category-card">
         <h2>Ноутбуки</h2>
         <p>Портативні пристрої для навчання, роботи та подорожей.</p>
-        <a href="/catalog#laptops">Переглянути ноутбуки</a>
+        <a href="{{ url_for('shop.catalog', category='Ноутбук') }}">Переглянути ноутбуки</a>
     </article>
 
     <article class="category-card">
         <h2>Стаціонарні комп’ютери</h2>
         <p>Готові системи для дому, роботи та сучасних ігор.</p>
-        <a href="/catalog#computers">Переглянути комп’ютери</a>
+        <a href="{{ url_for('shop.catalog', category='Стаціонарний ПК') }}">Переглянути комп’ютери</a>
     </article>
 
     <article class="category-card">

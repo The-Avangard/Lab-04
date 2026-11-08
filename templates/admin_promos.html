@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Клієнти | Адмін-панель{% endblock %}
+{% block title %}Промокоди | Адмін-панель{% endblock %}
 
 {% block content %}
 <section class="page-intro">
     <p class="eyebrow">АДМІН-ПАНЕЛЬ</p>
-    <h1>Клієнти</h1>
-    <p>Керуйте контактними даними клієнтів магазину.</p>
+    <h1>Промокоди</h1>
+    <p>Створюйте та керуйте знижками для покупців.</p>
 </section>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -23,48 +23,47 @@
 <nav class="mt-6 flex flex-wrap gap-3" aria-label="Розділи адмін-панелі">
     <a href="{{ url_for('admin.admin') }}" class="button">Замовлення та відгуки</a>
     <a href="{{ url_for('admin.products') }}" class="button">Товари</a>
-    <a href="{{ url_for('admin.promos') }}" class="button">Промокоди</a>
+    <a href="{{ url_for('admin.clients') }}" class="button">Клієнти</a>
 </nav>
 
 <div class="mt-6">
-    <a href="{{ url_for('admin.new_client') }}" class="button">Додати клієнта</a>
+    <a href="{{ url_for('admin.new_promo') }}" class="button">Додати промокод</a>
 </div>
 
 <section class="catalog-section">
-    <h2>Список клієнтів</h2>
+    <h2>Список промокодів</h2>
 
-    {% if clients %}
+    {% if promo_codes %}
     <div class="overflow-x-auto">
         <table class="w-full border-collapse">
             <thead>
                 <tr class="border-b border-gray-300 text-left">
                     <th class="p-3">№</th>
-                    <th class="p-3">Ім’я</th>
-                    <th class="p-3">Електронна пошта</th>
-                    <th class="p-3">Телефон</th>
-                    <th class="p-3">Дата додавання</th>
+                    <th class="p-3">Код</th>
+                    <th class="p-3">Знижка</th>
+                    <th class="p-3">Статус</th>
+                    <th class="p-3">Дата створення</th>
                     <th class="p-3">Дії</th>
                 </tr>
             </thead>
             <tbody>
-                {% for client in clients %}
+                {% for promo in promo_codes %}
                 <tr class="border-b border-gray-200">
-                    <td class="p-3">{{ client['id'] }}</td>
-                    <td class="p-3">{{ client['name'] }}</td>
+                    <td class="p-3">{{ promo['id'] }}</td>
+                    <td class="p-3 font-semibold">{{ promo['code'] }}</td>
+                    <td class="p-3">{{ promo['discount_percent'] }}%</td>
                     <td class="p-3">
-                        <a href="mailto:{{ client['email'] }}">{{ client['email'] }}</a>
+                        {% if promo['is_active'] %}Активний{% else %}Неактивний{% endif %}
                     </td>
-                    <td class="p-3">{{ client['phone'] or '—' }}</td>
-                    <td class="p-3">{{ client['created_at'] }}</td>
+                    <td class="p-3">{{ promo['created_at'] }}</td>
                     <td class="p-3">
                         <div class="flex flex-wrap gap-2">
-                            <a href="{{ url_for('admin.edit_client', client_id=client['id']) }}">
+                            <a href="{{ url_for('admin.edit_promo', promo_id=promo['id']) }}">
                                 Редагувати
                             </a>
                             <form
-                                action="{{ url_for('admin.delete_client', client_id=client['id']) }}"
+                                action="{{ url_for('admin.delete_promo', promo_id=promo['id']) }}"
                                 method="post"
-                                onsubmit="return confirm('Видалити клієнта «{{ client['name'] }}»?')"
                             >
                                 <button type="submit" class="text-red-700 underline">
                                     Видалити
@@ -78,7 +77,7 @@
         </table>
     </div>
     {% else %}
-    <p>Клієнтів поки немає. Додайте першого клієнта.</p>
+    <p>Промокодів поки немає. Додайте перший промокод.</p>
     {% endif %}
 </section>
 {% endblock %}

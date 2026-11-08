@@ -67,14 +67,14 @@
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.error  'Не вдалося надіслати повідомлення.');
+                throw new Error(result.error || 'Не вдалося надіслати повідомлення.');
             }
 
             feedbackResult.textContent = result.message;
             feedbackForm.reset();
         } catch (error) {
             feedbackResult.textContent =
-                error.message  'Помилка з’єднання. Спробуйте ще раз.';
+                error.message || 'Помилка з’єднання. Спробуйте ще раз.';
         }
     });
 </script>

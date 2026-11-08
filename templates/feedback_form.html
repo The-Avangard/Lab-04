@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Редагування відгуку | Адмін-панель{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">АДМІН-ПАНЕЛЬ · ВІДГУКИ</p>
+    <h1>Редагувати відгук</h1>
+    <p>Оновіть ім’я, електронну пошту або текст повідомлення.</p>
+</section>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <p
+        class="mb-4 rounded-md border px-4 py-3 {% if category == 'error' %}border-red-300 bg-red-50 text-red-800{% else %}border-green-300 bg-green-50 text-green-800{% endif %}"
+        role="alert"
+    >
+        {{ message }}
+    </p>
+    {% endfor %}
+{% endwith %}
+
+<form method="post" class="contact-card mt-6 max-w-2xl">
+    <div class="mb-4">
+        <label for="name" class="mb-1 block font-semibold">Ім’я</label>
+        <input
+            id="name"
+            name="name"
+            type="text"
+            value="{{ feedback['name']|default('') }}"
+            maxlength="120"
+            required
+            class="w-full rounded-md border border-gray-300 px-3 py-2"
+        >
+    </div>
+
+    <div class="mb-4">
+        <label for="email" class="mb-1 block font-semibold">Електронна пошта</label>
+        <input
+            id="email"
+            name="email"
+            type="email"
+            value="{{ feedback['email']|default('') }}"
+            maxlength="254"
+            required
+            class="w-full rounded-md border border-gray-300 px-3 py-2"
+        >
+    </div>
+
+    <div class="mb-6">
+        <label for="message" class="mb-1 block font-semibold">Повідомлення</label>
+        <textarea
+            id="message"
+            name="message"
+            rows="6"
+            required
+            class="w-full rounded-md border border-gray-300 px-3 py-2"
+        >{{ feedback['message']|default('') }}</textarea>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+        <button type="submit" class="button" style="border: 0; cursor: pointer;">
+            Зберегти зміни
+        </button>
+        <a href="{{ url_for('admin.admin') }}" class="button">Скасувати</a>
+    </div>
+</form>
+{% endblock %}
