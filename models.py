@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS orders (
     email       TEXT NOT NULL,
     address     TEXT NOT NULL,
     total_price REAL NOT NULL CHECK (total_price >= 0),
+    promo_code  TEXT NOT NULL DEFAULT '',
+    discount_amount REAL NOT NULL DEFAULT 0 CHECK (discount_amount >= 0),
     status      TEXT NOT NULL,
     created_at  TEXT NOT NULL,
     FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE SET NULL
@@ -66,6 +68,14 @@ CREATE TABLE IF NOT EXISTS order_items (
     unit_price REAL NOT NULL CHECK (unit_price >= 0),
     FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS promo_codes (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    code             TEXT NOT NULL UNIQUE,
+    discount_percent REAL NOT NULL CHECK (discount_percent > 0 AND discount_percent <= 100),
+    is_active        INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
+    created_at       TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_products_category ON products (category);
@@ -172,7 +182,7 @@ def close_db(exception=None):
 
 
 def init_db():
-    """Create tables and add the catalog's initial products once."""
+    """Create tables and add initial catalog and promotion data once."""
     db = get_db()
     db.executescript(SCHEMA)
     product_count = db.execute('SELECT COUNT(*) FROM products').fetchone()[0]
@@ -184,6 +194,13 @@ def init_db():
                    VALUES (?, ?, ?, ?, ?, ?, ?)''',
                 [(*product, now()) for product in INITIAL_PRODUCTS],
             )
+
+    with db:
+        db.execute(
+            '''INSERT OR IGNORE INTO promo_codes (code, discount_percent, is_active, created_at)
+               VALUES (?, ?, ?, ?)''',
+            ('AVANGARD10', 10, 1, now()),
+        )
 
 
 # ------------------------------------------------------------------- clients
@@ -319,10 +336,65 @@ def delete_product(product_id):
         db.execute('DELETE FROM products WHERE id = ?', (product_id,))
 
 
+# -------------------------------------------------------------- промокоди
+
+def get_promo_codes():
+    return get_db().execute('SELECT * FROM promo_codes ORDER BY id DESC').fetchall()
+
+
+def get_promo_code(code):
+    normalized_code = code.strip().upper()
+    return get_db().execute(
+        'SELECT * FROM promo_codes WHERE code = ?', (normalized_code,)
+    ).fetchone()
+
+
+def add_promo_code(code, discount_percent, is_active=True):
+    normalized_code = code.strip().upper()
+    discount_percent = float(discount_percent)
+    if not normalized_code:
+        raise ValueError('Вкажіть код промокоду.')
+    if not 0 < discount_percent <= 100:
+        raise ValueError('Знижка має бути більшою за 0 і не перевищувати 100%.')
+
+    db = get_db()
+    with db:
+        cursor = db.execute(
+            '''INSERT INTO promo_codes (code, discount_percent, is_active, created_at)
+               VALUES (?, ?, ?, ?)''',
+            (normalized_code, discount_percent, int(bool(is_active)), now()),
+        )
+    return cursor.lastrowid
+
+
+def update_promo_code(promo_id, code, discount_percent, is_active):
+    normalized_code = code.strip().upper()
+    discount_percent = float(discount_percent)
+    if not normalized_code:
+        raise ValueError('Вкажіть код промокоду.')
+    if not 0 < discount_percent <= 100:
+        raise ValueError('Знижка має бути більшою за 0 і не перевищувати 100%.')
+
+    db = get_db()
+    with db:
+        db.execute(
+            '''UPDATE promo_codes
+               SET code = ?, discount_percent = ?, is_active = ?
+               WHERE id = ?''',
+            (normalized_code, discount_percent, int(bool(is_active)), promo_id),
+        )
+
+
+def delete_promo_code(promo_id):
+    db = get_db()
+    with db:
+        db.execute('DELETE FROM promo_codes WHERE id = ?', (promo_id,))
+
+
 # -------------------------------------------------------------------- orders
 
-def create_order(customer_name, email, address, cart, client_id=None):
-    """Create an order and its items atomically from ``{product_id: quantity}``."""
+def create_order(customer_name, email, address, cart, client_id=None, promo_code=''):
+    """Create an order atomically, optionally applying a valid promo code."""
     normalized_cart = {}
     for raw_product_id, raw_quantity in cart.items():
         try:
@@ -340,15 +412,27 @@ def create_order(customer_name, email, address, cart, client_id=None):
     if len(products) != len(normalized_cart):
         raise ValueError('Один або кілька товарів більше недоступні')
 
-    total = round(sum(product['price'] * normalized_cart[product['id']] for product in products), 2)
+    subtotal = round(
+        sum(product['price'] * normalized_cart[product['id']] for product in products), 2
+    )
+    normalized_promo = promo_code.strip().upper()
+    discount_amount = 0
+    if normalized_promo:
+        promotion = get_promo_code(normalized_promo)
+        if promotion is None or not promotion['is_active']:
+            raise ValueError('Промокод не знайдено або він неактивний.')
+        discount_amount = round(subtotal * promotion['discount_percent'] / 100, 2)
+    total = round(subtotal - discount_amount, 2)
+
     db = get_db()
     with db:
         cursor = db.execute(
             '''INSERT INTO orders
-               (client_id, customer_name, email, address, total_price, status, created_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?)''',
+               (client_id, customer_name, email, address, total_price, promo_code,
+                discount_amount, status, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
             (client_id, customer_name.strip(), email.strip().lower(), address.strip(),
-             total, ORDER_STATUSES[0], now()),
+             total, normalized_promo, discount_amount, ORDER_STATUSES[0], now()),
         )
         order_id = cursor.lastrowid
         db.executemany(
