@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Адмін-панель | AVANGARD SHOP{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">КЕРУВАННЯ МАГАЗИНОМ</p>
+    <h1>Адмін-панель</h1>
+    <p>Тут можна переглядати замовлення й відгуки та перейти до керування даними магазину.</p>
+</section>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <p
+        class="mb-4 rounded-md border px-4 py-3 {% if category == 'error' %}border-red-300 bg-red-50 text-red-800{% else %}border-green-300 bg-green-50 text-green-800{% endif %}"
+        role="status"
+    >
+        {{ message }}
+    </p>
+    {% endfor %}
+{% endwith %}
+
+<nav class="mt-6 flex flex-wrap gap-3" aria-label="Розділи адмін-панелі">
+    <a href="{{ url_for('admin.products') }}" class="button">Товари</a>
+    <a href="{{ url_for('admin.clients') }}" class="button">Клієнти</a>
+    <a href="{{ url_for('admin.promos') }}" class="button">Промокоди</a>
+</nav>
+
+<section class="catalog-section">
+    <h2>Замовлення</h2>
+
+    {% if orders %}
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="border-b border-gray-300 text-left">
+                    <th class="p-3">№</th>
+                    <th class="p-3">Клієнт</th>
+                    <th class="p-3">Email</th>
+                    <th class="p-3">Сума</th>
+                    <th class="p-3">Промокод</th>
+                    <th class="p-3">Статус</th>
+                    <th class="p-3">Дата</th>
+                    <th class="p-3">Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr class="border-b border-gray-200">
+                    <td class="p-3">{{ order['id'] }}</td>
+                    <td class="p-3">{{ order['customer_name'] }}</td>
+                    <td class="p-3">{{ order['email'] }}</td>
+                    <td class="p-3">
+                        {{ "{:,.0f}".format(order['total_price']).replace(",", " ") }} ₴
+                    </td>
+                    <td class="p-3">
+                        {% if order['promo_code'] %}
+                            {{ order['promo_code'] }}
+                            (−{{ "{:,.0f}".format(order['discount_amount']).replace(",", " ") }} ₴)
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td class="p-3">{{ order['status'] }}</td>
+                    <td class="p-3">{{ order['created_at'] }}</td>
+                    <td class="p-3">
+                        <div class="flex flex-wrap gap-2">
+                            <a href="{{ url_for('admin.order_details', order_id=order['id']) }}">
+                                Деталі
+                            </a>
+                            <form
+                                action="{{ url_for('admin.delete_order', order_id=order['id']) }}"
+                                method="post"
+                                onsubmit="return confirm('Видалити замовлення №{{ order['id'] }}?')"
+                            >
+                                <button type="submit" class="text-red-700 underline">
+                                    Видалити
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Замовлень поки немає.</p>
+    {% endif %}
+</section>
+
+<section class="catalog-section">
+    <h2>Відгуки та повідомлення</h2>
+
+    {% if feedback %}
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="border-b border-gray-300 text-left">
+                    <th class="p-3">№</th>
+                    <th class="p-3">Ім’я</th>
+                    <th class="p-3">Email</th>
+                    <th class="p-3">Повідомлення</th>
+                    <th class="p-3">Дата</th>
+                    <th class="p-3">Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in feedback %}
+                <tr class="border-b border-gray-200">
+                    <td class="p-3">{{ item['id'] }}</td>
+                    <td class="p-3">{{ item['name'] }}</td>
+                    <td class="p-3">{{ item['email'] }}</td>
+                    <td class="max-w-xs break-words p-3">{{ item['message'] }}</td>
+                    <td class="p-3">{{ item['created_at'] }}</td>
+                    <td class="p-3">
+                        <div class="flex flex-wrap gap-2">
+                            <a href="{{ url_for('admin.edit_feedback', feedback_id=item['id']) }}">
+                                Редагувати
+                            </a>
+                            <form
+                                action="{{ url_for('admin.delete_feedback', feedback_id=item['id']) }}"
+                                method="post"
+                                onsubmit="return confirm('Видалити відгук №{{ item['id'] }}?')"
+                            >
+                                <button type="submit" class="text-red-700 underline">
+                                    Видалити
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Відгуків поки немає.</p>
+    {% endif %}
+</section>
+{% endblock %}

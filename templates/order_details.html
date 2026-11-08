@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Замовлення №{{ order['id'] }} | Адмін-панель{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">АДМІН-ПАНЕЛЬ · ЗАМОВЛЕННЯ</p>
+    <h1>Замовлення №{{ order['id'] }}</h1>
+    <p>Перегляньте склад замовлення та за потреби змініть його статус.</p>
+</section>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <p
+        class="mb-4 rounded-md border px-4 py-3 {% if category == 'error' %}border-red-300 bg-red-50 text-red-800{% else %}border-green-300 bg-green-50 text-green-800{% endif %}"
+        role="status"
+    >
+        {{ message }}
+    </p>
+    {% endfor %}
+{% endwith %}
+
+<section class="contact-card mt-6">
+    <h2>Дані замовлення</h2>
+    <dl class="mt-4 grid gap-3 sm:grid-cols-2">
+        <div>
+            <dt class="font-semibold">Клієнт</dt>
+            <dd>{{ order['customer_name'] }}</dd>
+        </div>
+        <div>
+            <dt class="font-semibold">Електронна пошта</dt>
+            <dd><a href="mailto:{{ order['email'] }}">{{ order['email'] }}</a></dd>
+        </div>
+        <div>
+            <dt class="font-semibold">Адреса доставки</dt>
+            <dd>{{ order['address'] }}</dd>
+        </div>
+        <div>
+            <dt class="font-semibold">Дата створення</dt>
+            <dd>{{ order['created_at'] }}</dd>
+        </div>
+        <div>
+            <dt class="font-semibold">Статус</dt>
+            <dd>{{ order['status'] }}</dd>
+        </div>
+        <div>
+            <dt class="font-semibold">Промокод</dt>
+            <dd>
+                {% if order['promo_code'] %}
+                    {{ order['promo_code'] }}
+                    — знижка {{ "{:,.0f}".format(order['discount_amount']).replace(",", " ") }} ₴
+                {% else %}
+                    Не застосовувався
+                {% endif %}
+            </dd>
+        </div>
+    </dl>
+    <p class="price mt-5">
+        До сплати: {{ "{:,.0f}".format(order['total_price']).replace(",", " ") }} ₴
+    </p>
+</section>
+
+<section class="catalog-section">
+    <h2>Товари в замовленні</h2>
+
+    {% if items %}
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="border-b border-gray-300 text-left">
+                    <th class="p-3">Товар</th>
+                    <th class="p-3">Ціна за одиницю</th>
+                    <th class="p-3">Кількість</th>
+                    <th class="p-3">Сума</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr class="border-b border-gray-200">
+                    <td class="p-3">{{ item['name'] }}</td>
+                    <td class="p-3">
+                        {{ "{:,.0f}".format(item['unit_price']).replace(",", " ") }} ₴
+                    </td>
+                    <td class="p-3">{{ item['quantity'] }}</td>
+                    <td class="p-3">
+                        {{ "{:,.0f}".format(item['subtotal']).replace(",", " ") }} ₴
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>У замовленні немає товарів.</p>
+    {% endif %}
+</section>
+
+<section class="contact-card mt-8">
+    <h2>Оновити статус</h2>
+    <form
+        action="{{ url_for('admin.update_order_status', order_id=order['id']) }}"
+        method="post"
+        class="mt-4 flex flex-wrap items-end gap-3"
+    >
+        <div>
+            <label for="status" class="mb-1 block font-semibold">Новий статус</label>
+            <select
+                id="status"
+                name="status"
+                required
+                class="rounded-md border border-gray-300 px-3 py-2"
+            >
+                {% for status in statuses %}
+                <option value="{{ status }}" {% if order['status'] == status %}selected{% endif %}>
+                    {{ status }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="button" style="border: 0; cursor: pointer;">
+            Зберегти статус
+        </button>
+    </form>
+</section>
+
+<div class="mt-6 flex flex-wrap gap-4">
+    <a href="{{ url_for('admin.admin') }}">Повернутися до адмін-панелі</a>
+
+    <form
+        action="{{ url_for('admin.delete_order', order_id=order['id']) }}"
+        method="post"
+        onsubmit="return confirm('Видалити замовлення №{{ order['id'] }}?')"
+    >
+        <button type="submit" class="text-red-700 underline">
+            Видалити замовлення
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -12,11 +12,9 @@
 <section class="contact-grid">
     <article class="contact-card">
         <h2>Електронна пошта</h2>
-        <p>
-            <a href="mailto:info@avangard-shop.example">
-                info@avangard-shop.example
-            </a>
-        </p>
+        <p><a href="mailto:info@avangard-shop.example">
+            info@avangard-shop.example
+        </a></p>
     </article>
 
     <article class="contact-card">
@@ -29,7 +27,55 @@
         <p>Понеділок — п’ятниця: 09:00–18:00</p>
         <p>Субота — неділя: вихідні</p>
     </article>
+
+    <article class="contact-card">
+        <h2>Напишіть нам</h2>
+
+        <form id="feedback-form" action="/contacts" method="post">
+            <label for="name">Ваше ім’я</label>
+            <input id="name" name="name" type="text" required>
+
+            <label for="email">Електронна пошта</label>
+            <input id="email" name="email" type="email" required>
+
+            <label for="message">Повідомлення</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+
+            <button type="submit">Надіслати</button>
+        </form>
+
+        <p id="feedback-result" role="status" aria-live="polite"></p>
+    </article>
 </section>
 
 <p class="note">Контактні дані наведені для навчального проєкту.</p>
+
+<script>
+    const feedbackForm = document.getElementById('feedback-form');
+    const feedbackResult = document.getElementById('feedback-result');
+
+    feedbackForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        feedbackResult.textContent = '';
+
+        try {
+            const response = await fetch(feedbackForm.action, {
+                method: 'POST',
+                body: new FormData(feedbackForm)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error  'Не вдалося надіслати повідомлення.');
+            }
+
+            feedbackResult.textContent = result.message;
+            feedbackForm.reset();
+        } catch (error) {
+            feedbackResult.textContent =
+                error.message  'Помилка з’єднання. Спробуйте ще раз.';
+        }
+    });
+</script>
 {% endblock %}

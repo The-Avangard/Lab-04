@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Товари | Адмін-панель{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">АДМІН-ПАНЕЛЬ</p>
+    <h1>Керування товарами</h1>
+    <p>Додавайте нові моделі техніки, оновлюйте інформацію та видаляйте товари.</p>
+</section>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <p
+        class="mb-4 rounded-md border px-4 py-3 {% if category == 'error' %}border-red-300 bg-red-50 text-red-800{% else %}border-green-300 bg-green-50 text-green-800{% endif %}"
+        role="status"
+    >
+        {{ message }}
+    </p>
+    {% endfor %}
+{% endwith %}
+
+<nav class="mt-6 flex flex-wrap gap-3" aria-label="Розділи адмін-панелі">
+    <a href="{{ url_for('admin.admin') }}" class="button">Замовлення та відгуки</a>
+    <a href="{{ url_for('admin.clients') }}" class="button">Клієнти</a>
+    <a href="{{ url_for('admin.promos') }}" class="button">Промокоди</a>
+</nav>
+
+<div class="mt-6">
+    <a href="{{ url_for('admin.new_product') }}" class="button">Додати товар</a>
+</div>
+
+<section class="catalog-section">
+    <h2>Товари в каталозі</h2>
+
+    {% if products %}
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="border-b border-gray-300 text-left">
+                    <th class="p-3">Фото</th>
+                    <th class="p-3">Назва</th>
+                    <th class="p-3">Категорія</th>
+                    <th class="p-3">Ціна</th>
+                    <th class="p-3">Статус</th>
+                    <th class="p-3">Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr class="border-b border-gray-200">
+                    <td class="p-3">
+                        {% if product['image_url'] %}
+                        <img
+                            src="{{ product['image_url'] }}"
+                            alt="{{ product['name'] }}"
+                            loading="lazy"
+                            class="h-16 w-24 rounded object-contain"
+                        >
+                        {% else %}
+                        <span>Немає фото</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-3">
+                        <strong>{{ product['name'] }}</strong>
+                        <p class="note">{{ product['specifications'] }}</p>
+                    </td>
+                    <td class="p-3">{{ product['category'] }}</td>
+                    <td class="p-3">
+                        {{ "{:,.0f}".format(product['price']).replace(",", " ") }} ₴
+                    </td>
+                    <td class="p-3">
+                        {% if product['is_available'] %}
+                            Доступний
+                        {% else %}
+                            Недоступний
+                        {% endif %}
+                    </td>
+                    <td class="p-3">
+                        <div class="flex flex-wrap gap-2">
+                            <a href="{{ url_for('admin.edit_product', product_id=product['id']) }}">
+                                Редагувати
+                            </a>
+                            <form
+                                action="{{ url_for('admin.delete_product', product_id=product['id']) }}"
+                                method="post"
+                                onsubmit="return confirm('Видалити товар «{{ product['name'] }}»?')"
+                            >
+                                <button type="submit" class="text-red-700 underline">
+                                    Видалити
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Товарів поки немає. Додайте перший товар до каталогу.</p>
+    {% endif %}
+</section>
+{% endblock %}
