@@ -64,8 +64,8 @@
 </head>
 
 <body class="bg-slate-100">
-    <nav class="bg-slate-800 p-4">
-        <div class="container mx-auto flex justify-between items-center">
+    <nav class="site-nav">
+        <div class="nav-inner">
             <a
                 href="{{ url_for('home') }}"
                 class="flex items-center gap-3 text-xl font-bold text-white transition-transform duration-300 hover:scale-105"
@@ -79,15 +79,20 @@
             </a>
 
             <!-- Меню для широких екранів -->
-            <div class="hidden md:flex space-x-4">
+            <div class="desktop-nav hidden md:flex">
                 <a href="{{ url_for('home') }}"
-                   class="text-white hover:text-white transition-colors duration-300 hover:underline">
+                   class="transition-colors duration-300 hover:underline">
                     Головна
                 </a>
 
                 <a href="{{ url_for('shop.catalog') }}"
-                   class="text-white hover:text-white transition-colors duration-300 hover:underline">
+                   class="transition-colors duration-300 hover:underline">
                     Каталог
+                </a>
+
+                <a href="{{ url_for('shop.cart') }}"
+                   class="transition-colors duration-300 hover:underline">
+                    Кошик{% if cart_count %} <span class="cart-count">{{ cart_count }}</span>{% endif %}
                 </a>
 
                 <a href="{{ url_for('categories') }}"
@@ -101,8 +106,13 @@
                 </a>
 
                 <a href="{{ url_for('feedback.contacts') }}"
-                   class="text-white hover:text-white transition-colors duration-300 hover:underline">
+                   class="transition-colors duration-300 hover:underline">
                     Контакти
+                </a>
+
+                <a href="{{ url_for('admin.admin') }}"
+                   class="transition-colors duration-300 hover:underline">
+                    Адмін-панель
                 </a>
             </div>
 
@@ -112,7 +122,7 @@
                 type="button"
                 aria-label="Відкрити меню"
                 aria-expanded="false"
-                class="md:hidden text-white w-6 h-6 relative cursor-pointer focus:outline-none"
+                class="menu-toggle md:hidden text-white w-6 h-6 relative cursor-pointer focus:outline-none"
             >
                 <span class="burger-line line1 block absolute left-0 h-0.5 w-6 bg-current"></span>
                 <span class="burger-line line2 block absolute left-0 h-0.5 w-6 bg-current"></span>
@@ -121,15 +131,20 @@
         </div>
 
         <!-- Мобільне меню, приховане за замовчуванням -->
-        <div id="mobile-menu" class="hidden md:hidden overflow-hidden">
+        <div id="mobile-menu" class="mobile-menu hidden md:hidden overflow-hidden">
             <a href="{{ url_for('home') }}"
                class="block text-white hover:text-white py-2 transition duration-300 hover:translate-x-2">
                 Головна
             </a>
 
             <a href="{{ url_for('shop.catalog') }}"
-               class="block text-white hover:text-white py-2 transition duration-300 hover:translate-x-2">
+               class="transition duration-300 hover:translate-x-2">
                 Каталог
+            </a>
+
+            <a href="{{ url_for('shop.cart') }}"
+               class="transition duration-300 hover:translate-x-2">
+                Кошик{% if cart_count %} ({{ cart_count }}){% endif %}
             </a>
 
             <a href="{{ url_for('categories') }}"
@@ -143,15 +158,24 @@
             </a>
 
             <a href="{{ url_for('feedback.contacts') }}"
-               class="block text-white hover:text-white py-2 transition duration-300 hover:translate-x-2">
+               class="transition duration-300 hover:translate-x-2">
                 Контакти
+            </a>
+
+            <a href="{{ url_for('admin.admin') }}"
+               class="transition duration-300 hover:translate-x-2">
+                Адмін-панель
             </a>
         </div>
     </nav>
 
-    <main class="container mx-auto mt-8 p-4">
+    <main class="site-main">
         {% block content %}{% endblock %}
     </main>
+
+    <footer class="site-footer">
+        <p>© {{ current_year }} AVANGARD SHOP. Усі права захищені.</p>
+    </footer>
 
     <script>
         const mobileMenuButton = document.getElementById('mobile-menu-button');

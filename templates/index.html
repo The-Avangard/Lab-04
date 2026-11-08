@@ -3,13 +3,21 @@
 {% block title %}Головна | AVANGARD SHOP{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <p class="eyebrow">МАГАЗИН КОМП’ЮТЕРНОЇ ТЕХНІКИ</p>
-    <h1>Техніка для роботи, навчання та ігор</h1>
-    <p class="hero-description">
-        Підберіть комп’ютер або ноутбук для своїх задач у каталозі AVANGARD TECH.
-    </p>
-    <a class="button" href="/catalog">Переглянути каталог</a>
+<section class="hero hero-layout">
+    <div class="hero-copy">
+        <p class="eyebrow">МАГАЗИН КОМП’ЮТЕРНОЇ ТЕХНІКИ</p>
+        <h1>Техніка для роботи, навчання та ігор</h1>
+        <p class="hero-description">
+            Підберіть комп’ютер або ноутбук для своїх задач у каталозі AVANGARD SHOP.
+        </p>
+        <a class="button" href="{{ url_for('shop.catalog') }}">Перейти до каталогу</a>
+    </div>
+    <img
+        class="hero-image"
+        src="https://content2.rozetka.com.ua/goods/images/big/609305696.jpg"
+        alt="Ноутбук Apple MacBook Pro 14 дюймів"
+        fetchpriority="high"
+    >
 </section>
 
 <section class="highlights">
