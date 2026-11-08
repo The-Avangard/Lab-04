@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if is_new %}Додати клієнта{% else %}Редагувати клієнта{% endif %} | AVANGARD SHOP
+{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">АДМІН-ПАНЕЛЬ · КЛІЄНТИ</p>
+    <h1>{% if is_new %}Додати клієнта{% else %}Редагувати клієнта{% endif %}</h1>
+    <p>Заповніть контактні дані клієнта.</p>
+</section>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <p
+        class="mb-4 rounded-md border px-4 py-3
+        {% if category == 'error' %}
+            border-red-300 bg-red-50 text-red-800
+        {% else %}
+            border-green-300 bg-green-50 text-green-800
+        {% endif %}"
+        role="alert"
+    >
+        {{ message }}
+    </p>
+    {% endfor %}
+{% endwith %}
+
+<form method="post" class="contact-card mt-6 max-w-2xl">
+    <div class="mb-4">
+        <label for="name" class="mb-1 block font-semibold">Ім’я клієнта</label>
+        <input
+            id="name"
+            name="name"
+            type="text"
+            value="{{ client['name']|default('') }}"
+            autocomplete="name"
+            maxlength="120"
+            required
+            class="w-full rounded-md border border-gray-300 px-3 py-2"
+        >
+    </div>
+
+    <div class="mb-4">
+        <label for="email" class="mb-1 block font-semibold">Електронна пошта</label>
+        <input
+            id="email"
+            name="email"
+            type="email"
+            value="{{ client['email']|default('') }}"
+            autocomplete="email"
+            maxlength="254"
+            required
+            class="w-full rounded-md border border-gray-300 px-3 py-2"
+        >
+    </div>
+
+    <div class="mb-6">
+        <label for="phone" class="mb-1 block font-semibold">Телефон</label>
+        <input
+            id="phone"
+            name="phone"
+            type="tel"
+            value="{{ client['phone']|default('') }}"
+            autocomplete="tel"
+            class="w-full rounded-md border border-gray-300 px-3 py-2"
+        >
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+        <button type="submit" class="button" style="border: 0; cursor: pointer;">
+            {% if is_new %}Додати клієнта{% else %}Зберегти зміни{% endif %}
+        </button>
+        <a href="{{ url_for('admin.clients') }}" class="button">Скасувати</a>
+    </div>
+</form>
+{% endblock %}
