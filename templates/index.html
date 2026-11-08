@@ -3,40 +3,37 @@
 {% block title %}Головна | AVANGARD SHOP{% endblock %}
 
 {% block content %}
-<section class="hero hero-layout">
-    <div class="hero-copy">
-        <p class="eyebrow">МАГАЗИН КОМП’ЮТЕРНОЇ ТЕХНІКИ</p>
-        <h1>Техніка для роботи, навчання та ігор</h1>
-        <p class="hero-description">
-            Підберіть комп’ютер або ноутбук для своїх задач у каталозі AVANGARD SHOP.
-        </p>
-        <a class="button" href="{{ url_for('shop.catalog') }}">Перейти до каталогу</a>
+<section class="home-page" aria-labelledby="home-title">
+    <h1 id="home-title" class="home-visually-hidden">AVANGARD SHOP — техніка для роботи, навчання та ігор</h1>
+    <div class="home-banner-wrap">
+        <img
+            class="home-banner"
+            src="{{ url_for('static', filename='images/avangard-banner.png') }}"
+            alt="AVANGARD SHOP — комп’ютери, ноутбуки та техніка для роботи, навчання й ігор"
+            fetchpriority="high"
+        >
+        <a class="button home-button" href="{{ url_for('shop.catalog') }}">
+            Переглянути каталог <span aria-hidden="true">→</span>
+        </a>
     </div>
-    <img
-        class="hero-image"
-        src="https://content2.rozetka.com.ua/goods/images/big/609305696.jpg"
-        alt="Ноутбук Apple MacBook Pro 14 дюймів"
-        fetchpriority="high"
-    >
 </section>
 
-<section class="highlights">
-    <h2>Знайдіть потрібну техніку</h2>
-    <div class="highlight-list">
-        <article>
-            <h3>Ноутбуки</h3>
-            <p>Мобільні пристрої для навчання, роботи та розваг.</p>
-        </article>
-
-        <article>
-            <h3>Комп’ютери</h3>
-            <p>Готові системи для дому, офісу та ігор.</p>
-        </article>
-
-        <article>
-            <h3>Допомога з вибором</h3>
-            <p>Порівняйте характеристики й оберіть техніку під свої потреби.</p>
-        </article>
+<section class="home-categories" aria-labelledby="popular-categories-title">
+    <div class="home-category-heading">
+        <h2 id="popular-categories-title">Популярні категорії</h2>
+        <a href="{{ url_for('categories') }}">Усі категорії <span aria-hidden="true">→</span></a>
     </div>
+
+    <nav class="home-links" aria-label="Категорії техніки">
+        <a href="{{ url_for('shop.catalog', category='Приставка') }}">
+            <img src="{{ url_for('static', filename='images/category-consoles.png') }}" alt="Приставки — переглянути категорію" loading="lazy">
+        </a>
+        <a href="{{ url_for('shop.catalog', category='Стаціонарний ПК') }}">
+            <img src="{{ url_for('static', filename='images/category-computers.png') }}" alt="Комп’ютери — переглянути категорію" loading="lazy">
+        </a>
+        <a href="{{ url_for('shop.catalog', category='Ноутбук') }}">
+            <img src="{{ url_for('static', filename='images/category-laptops.png') }}" alt="Ноутбуки — переглянути категорію" loading="lazy">
+        </a>
+    </nav>
 </section>
 {% endblock %}

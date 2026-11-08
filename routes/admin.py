@@ -8,7 +8,7 @@ import models
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
-PRODUCT_CATEGORIES = ('Ноутбук', 'Стаціонарний ПК')
+PRODUCT_CATEGORIES = models.PRODUCT_CATEGORIES
 
 
 @admin_bp.route('/')

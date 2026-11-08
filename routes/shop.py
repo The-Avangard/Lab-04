@@ -66,10 +66,7 @@ def catalog():
     category = request.args.get('category', '').strip()
 
     products = models.get_products(query=query, category=category)
-    categories = sorted({
-        product['category']
-        for product in models.get_products()
-    })
+    categories = models.PRODUCT_CATEGORIES
 
     return render_template(
         'catalog.html',

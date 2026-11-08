@@ -12,6 +12,7 @@ from flask import current_app, g
 
 
 ORDER_STATUSES = ("Нове", "В обробці", "Відправлено", "Доставлено", "Скасовано")
+PRODUCT_CATEGORIES = ("Ноутбук", "Стаціонарний ПК", "Приставка")
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS clients (
