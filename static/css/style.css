@@ -1,0 +1,254 @@
+:root {
+    font-family: Arial, sans-serif;
+    color: #172033;
+    background: #f3f6fb;
+    font-synthesis: none;
+    line-height: 1.6;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+}
+
+a {
+    color: #1769c2;
+}
+
+a:focus-visible {
+    outline: 3px solid #f0a93a;
+    outline-offset: 3px;
+}
+
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 18px max(24px, calc((100% - 1120px) / 2));
+    background: #fff;
+    border-bottom: 1px solid #dce3ed;
+}
+
+.brand {
+    color: #172033;
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.site-header nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.site-header nav a {
+    color: #34415a;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.site-header nav a:hover {
+    color: #1769c2;
+}
+
+main {
+    width: min(1120px, calc(100% - 40px));
+    min-height: 75vh;
+    margin: 32px auto;
+}
+
+.hero {
+    padding: clamp(32px, 7vw, 76px);
+    color: #fff;
+    background: linear-gradient(120deg, #142b4a, #1769a8);
+    border-radius: 24px;
+}
+
+.eyebrow {
+    color: #5ba6f5;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.hero .eyebrow {
+    color: #a9d5ff;
+}
+
+.hero h1 {
+    max-width: 760px;
+    margin: 12px 0;
+    font-size: clamp(2rem, 5vw, 3.7rem);
+    line-height: 1.1;
+}
+
+.hero-description {
+    max-width: 620px;
+    color: #e2edf8;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 12px 20px;
+    color: #10213a;
+    background: #ffca63;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.button:hover {
+    background: #ffd98e;
+}
+
+.highlights,
+.catalog-section,
+.about-content,
+.contact-grid,
+.category-grid {
+    margin-top: 36px;
+}
+
+.highlight-list,
+.product-grid,
+.category-grid,
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.highlight-list article,
+.product-card,
+.category-card,
+.contact-card,
+.about-content {
+    padding: 22px;
+    background: #fff;
+    border: 1px solid #dce3ed;
+    border-radius: 14px;
+}
+
+.product-card,
+.category-card,
+.contact-card {
+    box-shadow: 0 5px 18px rgb(23 32 51 / 5%);
+}
+
+.product-type {
+    color: #5b6b82;
+    font-size: 0.9rem;
+}
+
+#laptops .product-grid,
+#computers .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.product-card h2 {
+    margin: 16px 0 8px;
+    font-size: 1.15rem;
+    line-height: 1.35;
+}
+
+.product-image {
+    display: block;
+    width: 100%;
+    height: 210px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 10px;
+}
+
+.product-card .price {
+    margin-top: auto;
+}
+
+.price {
+    color: #1769c2;
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.category-card a,
+.product-card a {
+    font-weight: 700;
+}
+
+.page-intro {
+    padding: 28px 0 8px;
+}
+
+.page-intro h1 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.2;
+}
+
+.note {
+    color: #5b6b82;
+    font-size: 0.9rem;
+}
+
+.site-footer {
+    padding: 22px 20px;
+    color: #dce7f5;
+    background: #142b4a;
+    text-align: center;
+}
+
+@media (max-width: 950px) {
+    #laptops .product-grid,
+    #computers .product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .site-header {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px 20px;
+    }
+
+    .site-header nav {
+        justify-content: center;
+        gap: 10px 16px;
+    }
+
+    main {
+        width: min(100% - 28px, 560px);
+        margin: 20px auto;
+    }
+
+    .highlight-list,
+    .product-grid,
+    .category-grid,
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #laptops .product-grid,
+    #computers .product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        border-radius: 16px;
+    }
+}

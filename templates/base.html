@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AVANGARD TECH{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Tailwind CSS 4 через CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <style>
+        @keyframes slideDown {
+            0% { max-height: 0; opacity: 0; }
+            100% { max-height: 300px; opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            0% { max-height: 300px; opacity: 1; }
+            100% { max-height: 0; opacity: 0; }
+        }
+
+        .animate-slide-down {
+            animation: slideDown 0.3s ease-out forwards;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.3s ease-in forwards;
+        }
+
+        /* Три лінії кнопки-бургера */
+        .burger-line {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .line1 { top: 4px; }
+        .line2 { top: 11px; }
+        .line3 { top: 18px; }
+
+        /* У відкритому стані бургер перетворюється на хрестик */
+        .open .line1 {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .open .line2 {
+            opacity: 0;
+        }
+
+        .open .line3 {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* Білий текст у шапці */
+        nav.bg-slate-800 a,
+        nav.bg-slate-800 a:visited,
+        nav.bg-slate-800 a:hover,
+        nav.bg-slate-800 a:focus,
+        .site-header .brand,
+        .site-header nav a,
+        .site-header nav a:hover {
+            color: #fff !important;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100">
+    <nav class="bg-slate-800 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a
+                href="{{ url_for('home') }}"
+                class="flex items-center gap-3 text-xl font-bold text-white transition-transform duration-300 hover:scale-105"
+            >
+                <img
+                    src="{{ url_for('static', filename='css/avangard-logo.png') }}"
+                    alt="Емблема AVANGARD SHOP"
+                    class="h-10 w-10 object-contain"
+                >
+                <span>AVANGARD SHOP</span>
+            </a>
+
+            <!-- Меню для широких екранів -->
+            <div class="hidden md:flex space-x-4">
+                <a href="{{ url_for('home') }}"
+                   class="text-white hover:text-white transition-colors duration-300 hover:underline">
+                    Головна
+                </a>
+
+                <a href="{{ url_for('catalog') }}"
+                   class="text-white hover:text-white transition-colors duration-300 hover:underline">
+                    Каталог
+                </a>
+
+                <a href="{{ url_for('categories') }}"
+                   class="text-white hover:text-white transition-colors duration-300 hover:underline">
+                    Категорії
+                </a>
+
+                <a href="{{ url_for('about') }}"
+                   class="text-white hover:text-white transition-colors duration-300 hover:underline">
+                    Про нас
+                </a>
+
+                <a href="{{ url_for('contacts') }}"
+                   class="text-white hover:text-white transition-colors duration-300 hover:underline">
+                    Контакти
+                </a>
+            </div>
+
+            <!-- Кнопка меню для мобільних пристроїв -->
+            <button
+                id="mobile-menu-button"
+                type="button"
+                aria-label="Відкрити меню"
+                aria-expanded="false"
+                class="md:hidden text-white w-6 h-6 relative cursor-pointer focus:outline-none"
+            >
+                <span class="burger-line line1 block absolute left-0 h-0.5 w-6 bg-current"></span>
+                <span class="burger-line line2 block absolute left-0 h-0.5 w-6 bg-current"></span>
+                <span class="burger-line line3 block absolute left-0 h-0.5 w-6 bg-current"></span>
+            </button>
+        </div>
+
+        <!-- Мобільне меню, приховане за замовчуванням -->
+        <div id="mobile-menu" class="hidden md:hidden overflow-hidden">
+            <a href="{{ url_for('home') }}"
+               class="block text-white hover:text-white py-2 transition duration-300 hover:translate-x-2">
+                Головна
+            </a>
+
+            <a href="{{ url_for('catalog') }}"
+               class="block text-white hover:text-white py-2 transition duration-300 hover:translate-x-2">
+                Каталог
+            </a>
+
+            <a href="{{ url_for('categories') }}"
+               class="block text-white hover:text-white py-2 transition duration-300 hover:translate-x-2">
+                Категорії
+            </a>
+
+            <a href="{{ url_for('about') }}"
+               class="block text-white hover:text-white py-2 transition duration-300 hover:translate-x-2">
+                Про нас
+            </a>
+
+            <a href="{{ url_for('contacts') }}"
+               class="block text-white hover:text-white py-2 transition duration-300 hover:translate-x-2">
+                Контакти
+            </a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto mt-8 p-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            const isOpen = mobileMenuButton.classList.toggle('open');
+
+            mobileMenuButton.setAttribute('aria-expanded', isOpen);
+            mobileMenuButton.setAttribute(
+                'aria-label',
+                isOpen ? 'Закрити меню' : 'Відкрити меню'
+            );
+
+            if (isOpen) {
+                mobileMenu.classList.remove('hidden', 'animate-slide-up');
+                mobileMenu.classList.add('animate-slide-down');
+            } else {
+                mobileMenu.classList.remove('animate-slide-down');
+                mobileMenu.classList.add('animate-slide-up');
+
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>
