@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Кошик | AVANGARD SHOP{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p class="eyebrow">ВАШЕ ЗАМОВЛЕННЯ</p>
+    <h1>Кошик</h1>
+    <p>Перевірте товари та заповніть дані для доставки.</p>
+</section>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <p
+        class="mb-4 rounded-md border px-4 py-3 {% if category == 'error' %}border-red-300 bg-red-50 text-red-800{% else %}border-green-300 bg-green-50 text-green-800{% endif %}"
+        role="status"
+    >
+        {{ message }}
+    </p>
+    {% endfor %}
+{% endwith %}
+
+{% if lines %}
+<section class="catalog-section">
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="border-b border-gray-300 text-left">
+                    <th class="p-3">Товар</th>
+                    <th class="p-3">Ціна</th>
+                    <th class="p-3">Кількість</th>
+                    <th class="p-3">Сума</th>
+                    <th class="p-3">Дія</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in lines %}
+                <tr class="border-b border-gray-200">
+                    <td class="p-3">{{ line['product']['name'] }}</td>
+                    <td class="p-3">
+                        {{ "{:,.0f}".format(line['product']['price']).replace(",", " ") }} ₴
+                    </td>
+                    <td class="p-3">
+                        <form
+                            action="{{ url_for('shop.update_cart', product_id=line['product']['id']) }}"
+                            method="post"
+                            class="flex items-center gap-2"
+                        >
+                            <input
+                                type="number"
+                                name="quantity"
+                                value="{{ line['quantity'] }}"
+                                min="0"
+                                max="{{ max_quantity }}"
+                                aria-label="Кількість товару {{ line['product']['name'] }}"
+                                class="w-20 rounded-md border border-gray-300 px-2 py-1"
+                            >
+                            <button type="submit" class="text-blue-700 underline">
+                                Оновити
+                            </button>
+                        </form>
+                    </td>
+                    <td class="p-3">
+                        {{ "{:,.0f}".format(line['subtotal']).replace(",", " ") }} ₴
+                    </td>
+                    <td class="p-3">
+                        <form
+                            action="{{ url_for('shop.remove_from_cart', product_id=line['product']['id']) }}"
+                            method="post"
+                        >
+                            <button type="submit" class="text-red-700 underline">
+                                Видалити
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p class="price mt-6 text-right">
+        Разом: {{ "{:,.0f}".format(total).replace(",", " ") }} ₴
+    </p>
+</section>
+
+<section class="contact-card mt-8">
+    <h2>Оформлення замовлення</h2>
+
+    <form action="{{ url_for('shop.checkout') }}" method="post" class="mt-4 max-w-xl">
+        <div class="mb-4">
+            <label for="customer_name" class="mb-1 block font-semibold">Ваше ім’я</label>
+            <input
+                id="customer_name"
+                name="customer_name"
+                type="text"
+                autocomplete="name"
+                required
+                class="w-full rounded-md border border-gray-300 px-3 py-2"
+            >
+        </div>
+
+        <div class="mb-4">
+            <label for="email" class="mb-1 block font-semibold">Електронна пошта</label>
+            <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class="w-full rounded-md border border-gray-300 px-3 py-2"
+            >
+        </div>
+
+        <div class="mb-4">
+            <label for="address" class="mb-1 block font-semibold">Адреса доставки</label>
+            <textarea
+                id="address"
+                name="address"
+                rows="3"
+                autocomplete="street-address"
+                required
+                class="w-full rounded-md border border-gray-300 px-3 py-2"
+            ></textarea>
+        </div>
+
+        <div class="mb-4">
+            <label for="promo_code" class="mb-1 block font-semibold">Промокод</label>
+            <input
+                id="promo_code"
+                name="promo_code"
+                type="text"
+                placeholder="Наприклад, AVANGARD10"
+                class="w-full rounded-md border border-gray-300 px-3 py-2"
+            >
+            <p class="note">Промокод AVANGARD10 надає знижку 10%.</p>
+        </div>
+
+        <button type="submit" class="button" style="border: 0; cursor: pointer;">
+            Оформити замовлення
+        </button>
+    </form>
+</section>
+{% else %}
+<section class="contact-card mt-8">
+    <h2>Кошик порожній</h2>
+    <p>Додайте товари з каталогу, щоб оформити замовлення.</p>
+    <a href="{{ url_for('shop.catalog') }}" class="button">Перейти до каталогу</a>
+</section>
+{% endif %}
+{% endblock %}
