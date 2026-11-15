@@ -61,11 +61,6 @@ a:focus-visible {
     color: #1769c2;
 }
 
-main {
-    width: min(1120px, calc(100% - 40px));
-    margin: 32px auto;
-}
-
 .site-nav {
     padding: 14px 24px;
     color: #fff;
@@ -399,6 +394,84 @@ body.theme-dark .text-blue-700 { color: #78cfff; }
 body.theme-dark .text-red-700 { color: #ff8b9b; }
 body.theme-dark .bg-red-50 { color: #ffc1ca; background: #35131d; }
 body.theme-dark .bg-green-50 { color: #b5f4d8; background: #0e2c24; }
+
+/* Feedback page */
+.feedback-panel {
+    padding: clamp(22px, 4vw, 42px);
+    color: #eef2fa;
+    background: linear-gradient(150deg, #0e2455, #071639);
+    border: 1px solid #193467;
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgb(0 10 35 / 24%);
+}
+
+.feedback-panel h1 {
+    margin: 0 0 22px;
+    color: #f4f6fb;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    line-height: 1.2;
+}
+
+.feedback-form {
+    width: min(512px, 100%);
+    margin: 0 auto;
+}
+
+.feedback-field {
+    margin-bottom: 16px;
+}
+
+.feedback-field label {
+    display: block;
+    margin-bottom: 6px;
+    color: #dce8fc;
+    font-weight: 700;
+}
+
+.feedback-field input,
+.feedback-field textarea {
+    display: block;
+    width: 100%;
+    padding: 11px 12px;
+    color: #eef2fa;
+    background: #060f25;
+    border: 1px solid #294878;
+    border-radius: 7px;
+    font: inherit;
+}
+
+.feedback-field textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.feedback-field input:focus,
+.feedback-field textarea:focus {
+    border-color: #55aaff;
+    outline: 3px solid rgb(67 150 255 / 20%);
+}
+
+.feedback-submit {
+    padding: 12px 18px;
+    color: #fff;
+    background: #245dff;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+}
+
+.feedback-submit:hover {
+    background: #3474ff;
+}
+
+.feedback-result {
+    width: min(512px, 100%);
+    min-height: 1.6em;
+    margin: 14px auto 0;
+    color: #a5badb;
+}
 
 /* Home page */
 .home-visually-hidden {
