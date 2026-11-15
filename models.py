@@ -207,20 +207,17 @@ def close_db(exception=None):
 
 
 def init_db():
-    """Create tables and add initial catalog and promotion data once."""
+    """Create tables and add any missing initial catalog and promotion data."""
     db = get_db()
     db.executescript(SCHEMA)
-    product_count = db.execute('SELECT COUNT(*) FROM products').fetchone()[0]
-    if product_count == 0:
-        with db:
-            db.executemany(
-                '''INSERT INTO products
-                   (category, name, description, specifications, price, image_url, created_at)
-                   VALUES (?, ?, ?, ?, ?, ?, ?)''',
-                [(*product, now()) for product in INITIAL_PRODUCTS],
-            )
-
     with db:
+        db.executemany(
+            '''INSERT INTO products
+               (category, name, description, specifications, price, image_url, created_at)
+               SELECT ?, ?, ?, ?, ?, ?, ?
+               WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = ?)''',
+            [(*product, now(), product[1]) for product in INITIAL_PRODUCTS],
+        )
         db.execute(
             '''INSERT OR IGNORE INTO promo_codes (code, discount_percent, is_active, created_at)
                VALUES (?, ?, ?, ?)''',
