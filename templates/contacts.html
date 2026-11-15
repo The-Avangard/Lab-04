@@ -1,54 +1,37 @@
 {% extends "base.html" %}
 
-{% block title %}Контакти | AVANGARD SHOP{% endblock %}
+{% block title %}Зворотний зв'язок | AVANGARD SHOP{% endblock %}
 
 {% block content %}
-<section class="page-intro">
-    <p class="eyebrow">МИ НА ЗВ’ЯЗКУ</p>
-    <h1>Контакти</h1>
-    <p>Напишіть нам, якщо потрібна допомога з вибором техніки.</p>
-</section>
+<section class="feedback-panel">
+    <h1>Зворотний зв'язок</h1>
 
-<section class="contact-grid">
-    <article class="contact-card">
-        <h2>Електронна пошта</h2>
-        <p><a href="mailto:info@avangard-shop.example">
-            info@avangard-shop.example
-        </a></p>
-    </article>
-
-    <article class="contact-card">
-        <h2>Телефон</h2>
-        <p>+380 (00) 000-00-00</p>
-    </article>
-
-    <article class="contact-card">
-        <h2>Графік роботи</h2>
-        <p>Понеділок — п’ятниця: 09:00–18:00</p>
-        <p>Субота — неділя: вихідні</p>
-    </article>
-
-    <article class="contact-card">
-        <h2>Напишіть нам</h2>
-
-        <form id="feedback-form" action="/contacts" method="post">
+    <form
+        id="feedback-form"
+        class="feedback-form"
+        action="{{ url_for('feedback.contacts') }}"
+        method="post"
+    >
+        <div class="feedback-field">
             <label for="name">Ваше ім’я</label>
-            <input id="name" name="name" type="text" required>
+            <input id="name" name="name" type="text" maxlength="100" required>
+        </div>
 
+        <div class="feedback-field">
             <label for="email">Електронна пошта</label>
-            <input id="email" name="email" type="email" required>
+            <input id="email" name="email" type="email" maxlength="254" required>
+        </div>
 
+        <div class="feedback-field">
             <label for="message">Повідомлення</label>
-            <textarea id="message" name="message" rows="5" required></textarea>
+            <textarea id="message" name="message" rows="6" maxlength="2000" required></textarea>
+        </div>
 
-            <button type="submit">Надіслати</button>
-        </form>
+        <button class="feedback-submit" type="submit">Надіслати</button>
+    </form>
 
-        <p id="feedback-result" role="status" aria-live="polite"></p>
-    </article>
+    <p id="feedback-result" class="feedback-result" role="status" aria-live="polite"></p>
 </section>
-
-<p class="note">Контактні дані наведені для навчального проєкту.</p>
 
 <script>
     const feedbackForm = document.getElementById('feedback-form');
