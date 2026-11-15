@@ -6,6 +6,7 @@ import models
 feedback_bp = Blueprint('feedback', __name__)
 
 
+@feedback_bp.route('/feedback', methods=['GET', 'POST'])
 @feedback_bp.route('/contacts', methods=['GET', 'POST'])
 def contacts():
     if request.method == 'POST':

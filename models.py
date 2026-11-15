@@ -214,6 +214,14 @@ def get_client(client_id):
     return get_db().execute('SELECT * FROM clients WHERE id = ?', (client_id,)).fetchone()
 
 
+def get_client_by_email(email):
+    """Find a client by their normalized email address."""
+    return get_db().execute(
+        'SELECT * FROM clients WHERE email = ?',
+        (email.strip().lower(),),
+    ).fetchone()
+
+
 def add_client(name, email, phone=''):
     db = get_db()
     with db:
@@ -243,6 +251,10 @@ def delete_client(client_id):
 
 def add_feedback(name, email, message, client_id=None):
     db = get_db()
+    if client_id is None:
+        client = get_client_by_email(email)
+        if client is not None:
+            client_id = client['id']
     with db:
         cursor = db.execute(
             '''INSERT INTO feedback (client_id, name, email, message, created_at)
@@ -395,7 +407,7 @@ def delete_promo_code(promo_id):
 # -------------------------------------------------------------------- orders
 
 def create_order(customer_name, email, address, cart, client_id=None, promo_code=''):
-    """Create an order atomically, optionally applying a valid promo code."""
+    """Create an order atomically, linking or creating its client by email."""
     normalized_cart = {}
     for raw_product_id, raw_quantity in cart.items():
         try:
@@ -426,13 +438,29 @@ def create_order(customer_name, email, address, cart, client_id=None, promo_code
     total = round(subtotal - discount_amount, 2)
 
     db = get_db()
+    normalized_email = email.strip().lower()
     with db:
+        if client_id is None:
+            client = db.execute(
+                'SELECT id FROM clients WHERE email = ?',
+                (normalized_email,),
+            ).fetchone()
+            if client is None:
+                client_cursor = db.execute(
+                    '''INSERT INTO clients (name, email, phone, created_at)
+                       VALUES (?, ?, ?, ?)''',
+                    (customer_name.strip(), normalized_email, '', now()),
+                )
+                client_id = client_cursor.lastrowid
+            else:
+                client_id = client['id']
+
         cursor = db.execute(
             '''INSERT INTO orders
                (client_id, customer_name, email, address, total_price, promo_code,
                 discount_amount, status, created_at)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-            (client_id, customer_name.strip(), email.strip().lower(), address.strip(),
+            (client_id, customer_name.strip(), normalized_email, address.strip(),
              total, normalized_promo, discount_amount, ORDER_STATUSES[0], now()),
         )
         order_id = cursor.lastrowid

@@ -4,9 +4,7 @@ from datetime import datetime
 from flask import Flask, render_template, session
 
 import models
-from routes.admin import admin_bp
-from routes.feedback import feedback_bp
-from routes.shop import shop_bp
+from routes import admin_bp, feedback_bp, shop_bp
 
 
 app = Flask(__name__)
