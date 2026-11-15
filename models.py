@@ -158,6 +158,30 @@ INITIAL_PRODUCTS = (
         114300,
         'https://content1.rozetka.com.ua/goods/images/big/666775842.webp',
     ),
+    (
+        'Приставка',
+        'Ігрова приставка Sony PlayStation 5 Slim (CFI-2116)',
+        'Ігрова приставка Sony PlayStation 5 Slim для домашніх ігор.',
+        'Модель: CFI-2116',
+        34599,
+        'https://content2.rozetka.com.ua/goods/images/big/391885922.jpg',
+    ),
+    (
+        'Приставка',
+        'Ігрова консоль Microsoft Xbox Series S 512GB White (889842651386) [50322]',
+        'Компактна ігрова консоль Microsoft Xbox Series S у білому корпусі.',
+        'Пам’ять: 512 ГБ · Колір: White · Артикул: 889842651386 [50322]',
+        27169,
+        'https://content2.rozetka.com.ua/goods/images/big/593948634.jpg',
+    ),
+    (
+        'Приставка',
+        'Ігрова приставка Microsoft Xbox Series X 1TB (889842640816)',
+        'Ігрова приставка Microsoft Xbox Series X із накопичувачем 1 ТБ.',
+        'Накопичувач: 1 ТБ · Артикул: 889842640816',
+        47000,
+        'https://content1.rozetka.com.ua/goods/images/big/669500879.webp',
+    ),
 )
 
 
